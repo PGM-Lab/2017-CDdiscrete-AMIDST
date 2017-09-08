@@ -13,28 +13,22 @@ package eu.amidst.latentvariablemodels.staticmodels;
 
 import eu.amidst.core.conceptdrift.utils.GaussianHiddenTransitionMethod;
 import eu.amidst.core.datastream.*;
-import eu.amidst.core.distribution.Normal;
-import eu.amidst.core.distribution.Normal_MultinomialNormalParents;
 import eu.amidst.core.io.DataStreamLoader;
 import eu.amidst.core.learning.parametric.bayesian.SVB;
 import eu.amidst.core.learning.parametric.bayesian.utils.PlateuIIDReplication;
 import eu.amidst.core.models.DAG;
 import eu.amidst.core.variables.Variable;
 import eu.amidst.flinklink.core.conceptdrift.IdentifiableIDAModel;
-import eu.amidst.flinklink.core.data.DataFlink;
-import eu.amidst.flinklink.core.io.DataFlinkLoader;
 import eu.amidst.flinklink.core.learning.parametric.ParallelVB;
 import eu.amidst.latentvariablemodels.staticmodels.exceptions.WrongConfigurationException;
-import org.apache.flink.api.java.ExecutionEnvironment;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
 
  */
-public class ConceptDriftDetector extends Model<ConceptDriftDetector> {
+public class ConceptDriftDetectorFG extends Model<ConceptDriftDetectorFG> {
 
     /** Represents the drift detection mode. Only the global mode is currently provided.*/
     public enum DriftDetector {GLOBAL};
@@ -64,9 +58,6 @@ public class ConceptDriftDetector extends Model<ConceptDriftDetector> {
     /** Represents whether there is or not a global hidden variable modelling concept drift*/
     boolean globalHidden;
 
-	/** Represents the list of hidden vars modelling  the local concept drift*/
-	List<Variable> localHiddenVars;
-
 
     /**
      * Constructor of classifier from a list of attributes (e.g. from a datastream).
@@ -74,7 +65,7 @@ public class ConceptDriftDetector extends Model<ConceptDriftDetector> {
      * and diagonal = true.
      * @param attributes object of the class Attributes
      */
-    public ConceptDriftDetector(Attributes attributes) throws WrongConfigurationException {
+    public ConceptDriftDetectorFG(Attributes attributes) throws WrongConfigurationException {
         super(attributes);
 
         transitionVariance=0.1;
@@ -84,7 +75,7 @@ public class ConceptDriftDetector extends Model<ConceptDriftDetector> {
         fading = 1.0;
         numberOfGlobalVars = 1;
         globalHidden = true;
-        super.windowSize = 1000;
+        super.windowSize = 200;
     }
 
 
@@ -99,25 +90,15 @@ public class ConceptDriftDetector extends Model<ConceptDriftDetector> {
 
         String className = atts.getFullListOfAttributes().get(classIndex).getName();
         hiddenVars = new ArrayList<Variable>();
-	//	localHiddenVars = new ArrayList<Variable>(); //
 
-		for (int i = 0; i < this.numberOfGlobalVars ; i++) {
-            hiddenVars.add(vars.newGaussianVariable("GlobalHidden_"+i));
+        for (int i = 0; i < this.numberOfGlobalVars ; i++) {
+            hiddenVars.add(vars.newMultinomialVariable("GlobalHidden_"+i,5));
         }
 
-		//
-		int j = 0;
-	//	for (Attribute att : atts.getListOfNonSpecialAttributes()) {
-	//		localHiddenVars.add(vars.newGaussianVariable("LocalHidden_"+j));
-	//		j++;
-
-	//	}
-
-		Variable classVariable = vars.getVariableByName(className);
+        Variable classVariable = vars.getVariableByName(className);
 
         dag = new DAG(vars);
 
-		j = 0; //
         for (Attribute att : atts.getListOfNonSpecialAttributes()) {
             if (att.getName().equals(className))
                 continue;
@@ -126,13 +107,13 @@ public class ConceptDriftDetector extends Model<ConceptDriftDetector> {
             dag.getParentSet(variable).addParent(classVariable);
             if (this.globalHidden) {
                 for (int i = 0; i < this.numberOfGlobalVars ; i++) {
-                    dag.getParentSet(variable).addParent(hiddenVars.get(i));
-                }
+                    //dag.getParentSet(hiddenVars.get(i)).addParent(variable);
+					dag.getParentSet(variable).addParent(hiddenVars.get(i));
+					dag.getParentSet(classVariable).addParent(hiddenVars.get(i));
+					//dag.getParentSet(hiddenVars.get(i)).addParent(classVariable);
+
+				}
             }
-
-		//	dag.getParentSet(variable).addParent(localHiddenVars.get(j)); //
-			j++;
-
         }
     }
 
@@ -154,6 +135,9 @@ public class ConceptDriftDetector extends Model<ConceptDriftDetector> {
             svb.setOutput(false);
             svb.getPlateuStructure().getVMP().setMaxIter(1000);
             svb.getPlateuStructure().getVMP().setThreshold(0.001);
+
+
+			svb.setTransitionMethod(null);
 
             learningAlgorithm = svb;
         }
@@ -214,30 +198,13 @@ public class ConceptDriftDetector extends Model<ConceptDriftDetector> {
 
 
 
-	public double[] getLocalHidenMeans() {
-
-		double means[] = new double[localHiddenVars.size()];
-
-		for (int i = 0; i<means.length; i++) {
-			means[i] = ((Normal) this.getPosteriorDistribution(localHiddenVars.get(i).getName())).getMean();
-
-		}
-
-		return means;
-
-	}
-
-
-
-
-
     /////// Getters and setters
 
     public double getTransitionVariance() {
         return transitionVariance;
     }
 
-    public ConceptDriftDetector setTransitionVariance(double transitionVariance) {
+    public ConceptDriftDetectorFG setTransitionVariance(double transitionVariance) {
         this.transitionVariance = transitionVariance;
         resetModel();
 		return this;
@@ -247,7 +214,7 @@ public class ConceptDriftDetector extends Model<ConceptDriftDetector> {
         return classIndex;
     }
 
-    public ConceptDriftDetector setClassIndex(int classIndex) {
+    public ConceptDriftDetectorFG setClassIndex(int classIndex) {
         this.classIndex = classIndex;
         resetModel();
 		return this;
@@ -257,7 +224,7 @@ public class ConceptDriftDetector extends Model<ConceptDriftDetector> {
         return seed;
     }
 
-    public ConceptDriftDetector setSeed(int seed) {
+    public ConceptDriftDetectorFG setSeed(int seed) {
         this.seed = seed;
         resetModel();
 		return this;
@@ -267,7 +234,7 @@ public class ConceptDriftDetector extends Model<ConceptDriftDetector> {
         return fading;
     }
 
-    public ConceptDriftDetector setFading(double fading) {
+    public ConceptDriftDetectorFG setFading(double fading) {
         this.fading = fading;
         resetModel();
 		return this;
@@ -277,7 +244,7 @@ public class ConceptDriftDetector extends Model<ConceptDriftDetector> {
         return numberOfGlobalVars;
     }
 
-    public ConceptDriftDetector setNumberOfGlobalVars(int numberOfGlobalVars) {
+    public ConceptDriftDetectorFG setNumberOfGlobalVars(int numberOfGlobalVars) {
         this.numberOfGlobalVars = numberOfGlobalVars;
         resetModel();
 		return this;
@@ -290,22 +257,21 @@ public class ConceptDriftDetector extends Model<ConceptDriftDetector> {
 
 
   		//// Multi-core example
-        int windowSize = 200;
+        int windowSize = 100;
 
     // DataStream<DataInstance> data = DataSetGenerator.generate(1234,100, 1, 3);
         //We can open the data stream using the static class DataStreamLoader
-        DataStream<DataInstance> data = DataStreamLoader.open("./datasets/DriftSets/finegrainCDbin.arff");
+        DataStream<DataInstance> data = DataStreamLoader.open("./datasets/DriftSets/finegrainCD.arff");
 
         System.out.println(data.getAttributes().toString());
 
 
         //Build the model
         Model model =
-				new ConceptDriftDetector(data.getAttributes())
+				new ConceptDriftDetectorFG(data.getAttributes())
 						.setWindowSize(windowSize)
-						.setClassIndex(6)
-						.setTransitionVariance(0.1)
-						.setNumberOfGlobalVars(1);
+						.setClassIndex(1)
+						.setTransitionVariance(0.1);
 
 
         for (DataOnMemory<DataInstance> batch : data.iterableOverBatches(windowSize)){
@@ -313,15 +279,14 @@ public class ConceptDriftDetector extends Model<ConceptDriftDetector> {
             System.out.println(model.getPosteriorDistribution("GlobalHidden_0").
                     toString());
 
-			//System.out.println(Arrays.toString(((ConceptDriftDetector)model).getLocalHidenMeans()));
-			System.out.println(model.getModel());
+		//	System.out.println(model.getModel());
 
 
-		}
+        }
 
         System.out.println(model.getDAG());
 
-		System.out.println(model.getModel());
+
 
 
 		////// Flink example

@@ -17,6 +17,7 @@
 
 package eu.amidst.latentvariablemodels.staticmodels.classifiers;
 
+import COM.hugin.HAPI.DataSet;
 import eu.amidst.core.datastream.Attributes;
 import eu.amidst.core.datastream.DataInstance;
 import eu.amidst.core.datastream.DataOnMemory;
@@ -28,16 +29,21 @@ import eu.amidst.core.models.DAG;
 import eu.amidst.core.utils.DataSetGenerator;
 import eu.amidst.core.utils.Utils;
 import eu.amidst.core.variables.StateSpaceTypeEnum;
+import eu.amidst.core.variables.Variable;
 import eu.amidst.latentvariablemodels.staticmodels.exceptions.WrongConfigurationException;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * The NaiveBayesClassifier class implements the interface {@link Classifier} and defines a Naive Bayes Classifier.
- * See Murphy, K. P. (2012). Machine learning: a probabilistic perspective. MIT press, page 82.
+
  */
-public class NaiveBayesClassifier extends Classifier<NaiveBayesClassifier>{
+public class ConceptDriftDetectorFG2 extends Classifier<ConceptDriftDetectorFG2>{
+
+
+    private Variable hiddenVar;
+    private int numStatesHiddenVar;
+
 
 
 
@@ -49,10 +55,11 @@ public class NaiveBayesClassifier extends Classifier<NaiveBayesClassifier>{
      * @throws WrongConfigurationException is thrown when the attributes passed are not suitable
      * for such classifier
      */
-    public NaiveBayesClassifier(Attributes attributes) throws WrongConfigurationException {
+    public ConceptDriftDetectorFG2(Attributes attributes) throws WrongConfigurationException {
         super(attributes);
+        numStatesHiddenVar = 2;
 
-        this.setLearningAlgorithm(new ParallelMLMissingData());
+      //  this.setLearningAlgorithm(new ParallelMLMissingData());
     }
 
     /**
@@ -61,8 +68,25 @@ public class NaiveBayesClassifier extends Classifier<NaiveBayesClassifier>{
     @Override
     protected void buildDAG() {
 
+       // hiddenVar = vars.newMultinomialVariable("HiddenVar",numStatesHiddenVar);
+
+		hiddenVar = vars.newGaussianVariable("HiddenVar");
+
+
         dag = new DAG(vars);
-        dag.getParentSets().stream().filter(w -> !w.getMainVar().equals(classVar)).forEach(w -> w.addParent(classVar));
+        dag.getParentSets().stream()
+				.filter(w -> !w.getMainVar().equals(classVar))
+				.filter(w -> !w.getMainVar().equals(hiddenVar))
+				.forEach(w -> {
+					w.addParent(classVar);
+				});
+
+		vars.getListOfVariables().stream()
+				.filter(v -> !v.equals(classVar) && !v.equals(hiddenVar))
+				.forEach(v -> {
+					//dag.getParentSet(v).addParent(hiddenVar);
+					dag.getParentSet(hiddenVar).addParent(v);
+				});
 
     }
 
@@ -75,6 +99,8 @@ public class NaiveBayesClassifier extends Classifier<NaiveBayesClassifier>{
     public boolean isValidConfiguration(){
         boolean isValid = true;
 
+		if(true)
+		return isValid;
 
         long numFinite = vars.getListOfVariables().stream()
                 .filter( v -> v.getStateSpaceTypeEnum().equals(StateSpaceTypeEnum.FINITE_SET))
@@ -95,6 +121,10 @@ public class NaiveBayesClassifier extends Classifier<NaiveBayesClassifier>{
 
     /////// Getters and setters
 
+    public ConceptDriftDetectorFG2 setNumStatesHiddenVar(int numStatesHiddenVar) {
+        this.numStatesHiddenVar = numStatesHiddenVar;
+        return this;
+    }
 
 
     //////////// example of use
@@ -103,16 +133,15 @@ public class NaiveBayesClassifier extends Classifier<NaiveBayesClassifier>{
 
 
 
-        //DataStream<DataInstance> data = DataSetGenerator.generate(1234,500, 2, 3);
+		//DataStream<DataInstance> data = DataStreamLoader.open("./datasets/DriftSets/finegrainCD.arff");
+		DataStream<DataInstance> data = DataStreamLoader.open("./datasets/DriftSets/finegrainCD.arff");
 
-        DataStream<DataInstance> data = DataStreamLoader.open("./datasets/DriftSets/finegrainCD.arff");
 
-
-        System.out.println(data.getAttributes().toString());
+		System.out.println(data.getAttributes().toString());
 
         String classVarName = "V2";
 
-        NaiveBayesClassifier nb = new NaiveBayesClassifier(data.getAttributes());
+        ConceptDriftDetectorFG2 nb = new ConceptDriftDetectorFG2(data.getAttributes());
         nb.setClassName(classVarName);
 
         nb.updateModel(data);
@@ -123,38 +152,9 @@ public class NaiveBayesClassifier extends Classifier<NaiveBayesClassifier>{
         System.out.println(nb.getModel());
         System.out.println(nb.getDAG());
 
-        // predict the class of one instances
-  /*      System.out.println("Predicts some instances, i.e. computes the posterior probability of the class");
-        List<DataInstance> dataTest = data.stream().collect(Collectors.toList()).subList(0,100);
-
-        double hits = 0;
-
-        for(DataInstance d : dataTest) {
-
-            double realValue = d.getValue(nb.getClassVar());
-            double predValue;
-
-            d.setValue(nb.getClassVar(), Utils.missingValue());
-            Multinomial posteriorProb = nb.predict(d);
 
 
-            double[] values = posteriorProb.getProbabilities();
-            if (values[0]>values[1]) {
-                predValue = 0;
-            }else {
-                predValue = 1;
 
-            }
-
-            if(realValue == predValue) hits++;
-
-            System.out.println("realValue = "+realValue+", predicted ="+predValue);
-
-        }
-
-        System.out.println("hits="+hits);
-
-*/
 
     }
 }

@@ -140,6 +140,7 @@
         <module>extensions/reviewMeeting2016</module>
         <module>extensions/scai2015</module>
         <module>extensions/uai2016</module>
+        <module>rlink</module>
 
 
     </modules>

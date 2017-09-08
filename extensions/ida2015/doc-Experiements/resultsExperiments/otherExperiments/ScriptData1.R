@@ -8,9 +8,9 @@ Y100beta0<-data$beta0_bath100
 X1000<-data$X1000
 Y1000beta0<-data$beta0_bath1000
 pdf("Data1_Beta0_varA_No1batch.pdf")
-#plot(X1,Y1beta0,type="l",ylim=c(-1.6, 10.6), col="blue", main="Variable A (CLG)")
+#plotSeries(X1,Y1beta0,type="l",ylim=c(-1.6, 10.6), col="blue", main="Variable A (CLG)")
 #lines(X10,Y10beta0, col="yellow")
-plot(X10,Y10beta0,type="l",ylim=c(-1.6, -0.5), xlab = "sample", ylab = "beta0", col="blue", main="Variable A (CLG)")
+plotSeries(X10,Y10beta0,type="l",ylim=c(-1.6, -0.5), xlab = "sample", ylab = "beta0", col="blue", main="Variable A (CLG)")
 lines(X100,Y100beta0, col="green")
 lines(X1000,Y1000beta0, col="brown", type="o",pch=20)
 lines(X1,data$beta0ML, col="red")
@@ -28,8 +28,8 @@ Y100beta1<-data$beta1_batch100
 X1000<-data$X1000
 Y1000beta1<-data$beta1_batch1000
 pdf("Data1_Beta1_varA_No1batch.pdf")
-#plot(X1,Y1beta1,type="l",ylim=c(-1.6, 10.6), col="blue", main="Variable A (CLG)")
-plot(X1,Y1beta1,type="l",ylim=c(-0.43, 1.5), xlab = "sample", ylab = "beta1", col="blue", main="Variable A (CLG)")
+#plotSeries(X1,Y1beta1,type="l",ylim=c(-1.6, 10.6), col="blue", main="Variable A (CLG)")
+plotSeries(X1,Y1beta1,type="l",ylim=c(-0.43, 1.5), xlab = "sample", ylab = "beta1", col="blue", main="Variable A (CLG)")
 lines(X10,Y10beta1, col="yellow")
 lines(X100,Y100beta1, col="green")
 lines(X1000,Y1000beta1, col="brown", type="o",pch=20)
@@ -44,7 +44,7 @@ YmeanB_batch1<-data$meanB_batch1[!is.na(data$meanB_batch1)]
 YmeanB_batch100<-data$meanB_batch100
 YmeanB_batch1000<-data$meanB_batch1000
 YmeanB_batch10000<-data$meanB_batch10000
-plot(X1[1:length(X1)],YsampleMeanB[1:length(YsampleMeanB)],type="l", col="blue", main="Variable B (normal)")
+plotSeries(X1[1:length(X1)],YsampleMeanB[1:length(YsampleMeanB)],type="l", col="blue", main="Variable B (normal)")
 lines(X2,YmeanB_batch100, col="green")
 lines(X3,YmeanB_batch1000, col="brown", type="p",pch=20)
 lines(X1[10:length(X1)],YmeanB_batch1[10:length(X1)], col="red")

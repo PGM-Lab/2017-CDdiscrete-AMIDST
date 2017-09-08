@@ -135,6 +135,7 @@ public abstract class Model<T extends Model> {
             svb.getPlateuStructure().getVMP().setMaxIter(100);
             svb.getPlateuStructure().getVMP().setThreshold(0.00001);
 
+
             learningAlgorithm = svb;
         }
         learningAlgorithm.setWindowsSize(windowSize);
@@ -145,7 +146,7 @@ public abstract class Model<T extends Model> {
         else
             throw new IllegalArgumentException("Non provided dag or PlateauStructure");
 
-        learningAlgorithm.setOutput(true);
+        learningAlgorithm.setOutput(false);
         learningAlgorithm.initLearning();
         initialized=true;
     }

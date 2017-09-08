@@ -474,6 +474,7 @@ public class SVB implements BayesianParameterLearningAlgorithm, Serializable {
         this.plateuStructure.resetQs();
         this.ef_extendedBN = this.plateuStructure.getEFLearningBN();
 
+
         if (transitionMethod!=null)
            this.ef_extendedBN = this.transitionMethod.initModel(this.ef_extendedBN, plateuStructure);
     }

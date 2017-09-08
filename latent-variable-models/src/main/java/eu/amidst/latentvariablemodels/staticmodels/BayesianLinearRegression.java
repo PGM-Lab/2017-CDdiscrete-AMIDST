@@ -185,7 +185,7 @@ public class BayesianLinearRegression extends Model<BayesianLinearRegression> {
                 new BayesianLinearRegression(data.getAttributes())
                         .setClassName(className)
                         .setWindowSize(100)
-                        .setDiagonal(false);
+                        .setDiagonal(true);
 
         BLR.updateModel(data);
         for (DataOnMemory<DataInstance> batch : data.iterableOverBatches(100)) {

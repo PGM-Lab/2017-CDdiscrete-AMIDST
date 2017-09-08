@@ -3,7 +3,7 @@ data <- read.csv(file="/Users/ana/core/extensions/uai2016/doc-experiments/experi
 pdf(paste("/Users/ana/core/extensions/uai2016/doc-experiments/experimentsResults/graphs/1MCajaMarData.pdf"),width=7, height=5)
 valmax<-max(c(data$X100L,data$X1000L,data$X2000L,data$X5000L),na.rm = TRUE)
 valmin<-min(data$X100L,data$X1000L,data$X2000L,data$X5000L,na.rm = TRUE)
-plot(data$X100T,data$X100L,type="o", ylim = c(valmin,valmax),pch=18,
+plotSeries(data$X100T,data$X100L,type="o", ylim = c(valmin,valmax),pch=18,
      xlab="Time (seconds)", ylab="Global lower bound",
      col=terrain.colors(3)[1], main="1M points - 12M node BN - all epochs")
 lines(data$X1000T,data$X1000L,type="o",pch=18, col="brown")
@@ -18,7 +18,7 @@ pdf(paste("/Users/ana/core/extensions/uai2016/doc-experiments/experimentsResults
 select <- seq_len(50) %% 5 == 0
 valmax<-max(c(data$X100L[select],data$X1000L[select],data$X2000L[select],data$X5000L[select]),na.rm = TRUE)
 valmin<-min(data$X100L[select],data$X1000L[select],data$X2000L[select],data$X5000L[select],na.rm = TRUE)
-plot(data$X100T[select],data$X100L[select],type="o", ylim = c(valmin,valmax), pch=18,xlab="Time (seconds)", 
+plotSeries(data$X100T[select],data$X100L[select],type="o", ylim = c(valmin,valmax), pch=18,xlab="Time (seconds)",
      ylab="Global lower bound", col=terrain.colors(3)[1], main="1M points - 12M node BN - 1 epoch")
 lines(data$X1000T[select],data$X1000L[select],type="o",pch=18, col="brown")
 lines(data$X2000T[select],data$X2000L[select],type="o",pch=18, col="orange")
@@ -32,7 +32,7 @@ dev.off()
 pdf(paste("/Users/ana/core/extensions/uai2016/doc-experiments/experimentsResults/graphs/1MCajaMarData_1000batchSize.pdf"),width=7, height=5)
 valmax<-max(c(data$X1000L,data$X0.1L,data$X0.01L),na.rm = TRUE)
 valmin<-min(data$X1000L,data$X0.1L,data$X0.01L,na.rm = TRUE)
-plot(data$X1000T,data$X1000L,type="o", ylim = c(valmin,valmax), pch=18,xlab="Time (seconds)", ylab="Global lower bound",
+plotSeries(data$X1000T,data$X1000L,type="o", ylim = c(valmin,valmax), pch=18,xlab="Time (seconds)", ylab="Global lower bound",
      col=terrain.colors(3)[1], main="1M points - 12M node BN - all epochs - 1000 bs")
 lines(data$X0.1T,data$X0.1L,type="o",pch=18, col="brown")
 lines(data$X0.01T,data$X0.01L,type="o",pch=18, col="blue")
@@ -43,7 +43,7 @@ dev.off()
 pdf(paste("/Users/ana/core/extensions/uai2016/doc-experiments/experimentsResults/graphs/1MCajaMarData_1000batchSizeEvery5Points.pdf"),width=7, height=5)
 valmax<-max(c(data$X1000L[select],data$X0.1L[select],data$X0.01L[select]),na.rm = TRUE)
 valmin<-min(data$X1000L[select],data$X0.1L[select],data$X0.01L[select],na.rm = TRUE)
-plot(data$X1000T[select],data$X1000L[select],type="o", ylim = c(valmin,valmax), pch=18,xlab="Time (seconds)", ylab="Global lower bound",
+plotSeries(data$X1000T[select],data$X1000L[select],type="o", ylim = c(valmin,valmax), pch=18,xlab="Time (seconds)", ylab="Global lower bound",
      col=terrain.colors(3)[1], main="1M points - 12M node BN - 1 epoch - 1000 batchSize")
 lines(data$X0.1T[select],data$X0.1L[select],type="o",pch=18, col="brown")
 lines(data$X0.01T[select],data$X0.01L[select],type="o",pch=18, col="blue")
@@ -61,7 +61,7 @@ data <- data[-c(1:10), ]
 pdf(paste("/Users/ana/core/extensions/uai2016/doc-experiments/experimentsResults/graphs/10KCajaMarData_MONTH1.pdf"),width=7, height=5)
 valmax<-max(c(data$VMP1000L,data$VMP100L,data$SVI10L,data$SVI100L,data$SVI1000L),na.rm = TRUE)
 valmin<-min(c(data$VMP1000L,data$VMP100L,data$SVI10L,data$SVI100L,data$SVI1000L),na.rm = TRUE)
-plot(data$VMP100T,data$VMP100L,type="o", ylim = c(valmin,valmax),pch=18,
+plotSeries(data$VMP100T,data$VMP100L,type="o", ylim = c(valmin,valmax),pch=18,
      xlab="Time (seconds)", ylab="Global lower bound",
      col=terrain.colors(3)[1], main="10K points - Month 1 - local")
 lines(data$SVI10T,data$SVI10L,type="o",pch=18, col="brown")
@@ -74,7 +74,7 @@ dev.off()
 pdf(paste("/Users/ana/core/extensions/uai2016/doc-experiments/experimentsResults/graphs/10KCajaMarData_MONTH1_NoSVI10.pdf"),width=7, height=5)
 valmax<-max(c(data$VMP1000L,data$VMP100L,data$SVI100L,data$SVI1000L),na.rm = TRUE)
 valmin<-min(c(data$VMP1000L,data$VMP100L,data$SVI100L,data$SVI1000L),na.rm = TRUE)
-plot(data$VMP100T,data$VMP100L,type="o", ylim = c(valmin,valmax),pch=18,
+plotSeries(data$VMP100T,data$VMP100L,type="o", ylim = c(valmin,valmax),pch=18,
      xlab="Time (seconds)", ylab="Global lower bound",
      col=terrain.colors(3)[1], main="10K points - Month 1 - local")
 lines(data$VMP1000T,data$VMP1000L,type="o",pch=18, col="brown")
@@ -93,7 +93,7 @@ data <- data[-c(1:8), ]
 pdf(paste("/Users/ana/core/extensions/uai2016/doc-experiments/experimentsResults/graphs/10KCajaMarData_MONTH1onCluster.pdf"),width=7, height=5)
 valmax<-max(c(data$VMP1000L,data$SVI100L,data$SVI1000L),na.rm = TRUE)
 valmin<-min(c(data$VMP1000L,data$SVI100L,data$SVI1000L),na.rm = TRUE)
-plot(data$VMP1000T,data$VMP1000L,type="o", ylim = c(valmin,valmax),pch=18,
+plotSeries(data$VMP1000T,data$VMP1000L,type="o", ylim = c(valmin,valmax),pch=18,
      xlab="Time (seconds)", ylab="Global lower bound",
      col=terrain.colors(3)[1], main="10K points - Month 1 - cluster")
 lines(data$SVI100T,data$SVI100L,type="o",pch=18, col="orange")
@@ -111,7 +111,7 @@ data <- read.csv(file="/Users/ana/core/extensions/uai2016/doc-experiments/experi
 pdf(paste("/Users/ana/core/extensions/uai2016/doc-experiments/experimentsResults/graphs/realData55K_VMP.pdf"),width=7, height=5)
 valmax<-max(c(data$VMP550L,data$VMP2750L,data$VMP5500L),na.rm = TRUE)
 valmin<-min(c(data$VMP550L,data$VMP2750L,data$VMP5500L),na.rm = TRUE)
-plot(data$VMP550T,data$VMP550L,type="o", ylim = c(valmin,valmax),pch=18,
+plotSeries(data$VMP550T,data$VMP550L,type="o", ylim = c(valmin,valmax),pch=18,
      xlab="Time (seconds)", ylab="Global lower bound",
      col=terrain.colors(3)[1], main="real CajaMar data - VMP")
 lines(data$VMP2750T,data$VMP2750L,type="o",pch=18, col="orange")
@@ -131,7 +131,7 @@ nskip <- 1
 pdf(paste("/Users/ana/core/extensions/uai2016/doc-experiments/experimentsResults/graphs/realData55K_SVI413.pdf"),width=7, height=5)
 valmax<-max(c(data$SVI550_055L[-c(1:nskip)],data$SVI550_075L[-c(1:nskip)],data$SVI550_099L[-c(1:5)]),na.rm = TRUE)
 valmin<-min(c(data$SVI550_055L[-c(1:nskip)],data$SVI550_075L[-c(1:nskip)],data$SVI550_099L[-c(1:5)]),na.rm = TRUE)
-plot(data$SVI550_055T[-c(1:nskip)],data$SVI550_055L[-c(1:nskip)],type="o", ylim = c(valmin,valmax),pch=18,
+plotSeries(data$SVI550_055T[-c(1:nskip)],data$SVI550_055L[-c(1:nskip)],type="o", ylim = c(valmin,valmax),pch=18,
      xlab="Time (seconds)", ylab="Global lower bound",
      col=myColours[1], main="real CajaMar data - SVI Batchsize 1%")
 lines(data$SVI550_075T[-c(1:nskip)],data$SVI550_075L[-c(1:nskip)],type="o",pch=18, col=myColours[2])
@@ -144,7 +144,7 @@ dev.off()
 pdf(paste("/Users/ana/core/extensions/uai2016/doc-experiments/experimentsResults/graphs/realData55K_SVI2065.pdf"),width=7, height=5)
 valmax<-max(c(data$SVI2750_055L,data$SVI2750_075L,data$SVI2750_099L),na.rm = TRUE)
 valmin<-min(c(data$SVI2750_055L,data$SVI2750_075L,data$SVI2750_099L),na.rm = TRUE)
-plot(data$SVI2750_055T,data$SVI2750_055L,type="o", ylim = c(valmin,valmax),pch=18,
+plotSeries(data$SVI2750_055T,data$SVI2750_055L,type="o", ylim = c(valmin,valmax),pch=18,
      xlab="Time (seconds)", ylab="Global lower bound",
      col=myColours[4], main="real CajaMar data - SVI Batchsize 5%")
 lines(data$SVI2750_075T,data$SVI2750_075L,type="o",pch=18, col=myColours[5])
@@ -159,7 +159,7 @@ valmax<-max(c(data$SVI5500_055L,data$SVI5500_075L,data$SVI5500_099L),na.rm = TRU
 valmin<-min(c(data$SVI5500_055L,data$SVI5500_075L,data$SVI5500_099L),na.rm = TRUE)
 valxmax<-max(c(data$SVI5500_055T,data$SVI5500_075T,data$SVI5500_099T),na.rm = TRUE)
 valxmin<-min(c(data$SVI5500_055T,data$SVI5500_075T,data$SVI5500_099T),na.rm = TRUE)
-plot(data$SVI5500_055T,data$SVI5500_055L,type="o", ylim = c(valmin,valmax),pch=18,
+plotSeries(data$SVI5500_055T,data$SVI5500_055L,type="o", ylim = c(valmin,valmax),pch=18,
      xlim = c(valxmin,valxmax), xlab="Time (seconds)", ylab="Global lower bound",
      col=myColours[7], main="real CajaMar data - SVI Batchsize 10%")
 lines(data$SVI5500_075T,data$SVI5500_075L,type="o",pch=18, col=myColours[8])
@@ -189,7 +189,7 @@ valymax<-max(allL,na.rm = TRUE)
 valymin<-min(allL,na.rm = TRUE)
 valxmax<-max(allT,na.rm = TRUE)
 valxmin<-min(allT,na.rm = TRUE)
-plot(data$SVI550_055T,data$SVI550_055L,type="o",
+plotSeries(data$SVI550_055T,data$SVI550_055L,type="o",
      ylim = c(-15000000,valymax),pch=18,
      xlab="Time (seconds)", ylab="Global lower bound",
      col="darkseagreen1",
@@ -226,7 +226,7 @@ valxmax<-max(allT,na.rm = TRUE)
 valxmin<-min(allT,na.rm = TRUE)
 par(mar=c(5.1, 4.1, 4.1, 4.1), xpd=FALSE)
 pdf(paste("/Users/ana/core/extensions/uai2016/doc-experiments/experimentsResults/graphs/scalability.pdf"),width=7, height=5)
-plot(data$nodes16T,data$nodes16L,type="o", ylim = c(-2.19E+09,valymax),xlim=c(valxmin,valxmax),pch=18,
+plotSeries(data$nodes16T,data$nodes16L,type="o", ylim = c(-2.19E+09,valymax),xlim=c(valxmin,valxmax),pch=18,
      xlab="Time (seconds)", ylab="Global lower bound",
      col="blue")
 lines(data$nodes8T,data$nodes8L,type="o",pch=18, col="brown")
@@ -247,7 +247,7 @@ valxmax<-max(allT,na.rm = TRUE)
 valxmin<-min(allT,na.rm = TRUE)
 par(mar=c(5.1, 4.1, 4.1, 4.1), xpd=FALSE)
 pdf(paste("/Users/ana/core/extensions/uai2016/doc-experiments/experimentsResults/graphs/algV1vsAlgV2.pdf"),width=7, height=5)
-plot(data$v1T,data$v1L,type="o", ylim = c(valymin,valymax),xlim=c(valxmin,valxmax),pch=18,
+plotSeries(data$v1T,data$v1L,type="o", ylim = c(valymin,valymax),xlim=c(valxmin,valxmax),pch=18,
      xlab="Time (seconds)", ylab="Global lower bound",
      col=terrain.colors(3)[1])
 lines(data$v2T,data$v2L,type="o",pch=18, col="brown")

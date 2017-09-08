@@ -78,10 +78,13 @@ public class CustomGaussianMixture extends Classifier<CustomGaussianMixture>{
 	//Method for testing the custom model
 	public static void main(String[] args) {
 		String filename = "datasets/bnaic2015/BCC/Month0.arff";
+
+		filename = "./datasets/DriftSets/finegrainCDbin.arff";
 		DataStream<DataInstance> data = DataStreamLoader.open(filename);
 
 		//Learn the model
-		Model model = new CustomGaussianMixture(data.getAttributes());
+		Model model = new CustomGaussianMixture(data.getAttributes())
+				.setClassName("V7");
 
 		model.updateModel(data);
 		BayesianNetwork bn = model.getModel();
